@@ -4,7 +4,7 @@ Automatically manages hotfix branches, increments tag versions, pushes to remote
 The standard git-flow extension is not good enough 💩.
 
 ## How to use
-Just copy the `git-flow` (https://github.com/Edgar-P-yan/better-git-flow-cli/blob/main/git-flow) file into the root folder of your repo, then make it executable:
+Just copy the `git-flow` [github.com/Edgar-P-yan/better-git-flow-cli/blob/main/git-flow](https://github.com/Edgar-P-yan/better-git-flow-cli/blob/main/git-flow) file into the root folder of your repo, then make it executable:
 ```bash
 chmod +x ./git-flow
 ```
