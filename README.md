@@ -1,5 +1,13 @@
 # Better Git Flow Helper CLI 👾
 
+<div align="center">
+  <a href="https://github.com/Edgar-P-yan/xml-class-transformer">
+    <img src="./assets/hero.png" width="600">
+  </a>
+  <br>
+  <br>
+</div>
+
 Automatically manages hotfix branches, increments tag versions, pushes to remote and etc.
 The standard git-flow extension is not good enough 💩.
 
