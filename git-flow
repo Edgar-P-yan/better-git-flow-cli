@@ -162,7 +162,10 @@ def semverAddPatch(ver: str) -> str:
     parts = ver.split(".")
     patch = str(int(parts[-1]) + 1)
 
-    return ".".join(parts[:-1]) + "." + patch
+    parts = parts[:-1]
+    parts.append(patch)
+
+    return ".".join(parts)
 
 
 def semverIncrReleaseCandidate(ver: str) -> str:
@@ -172,7 +175,10 @@ def semverIncrReleaseCandidate(ver: str) -> str:
     parts = ver.split(".")
     patch = str(int(parts[-1]) + 1)
 
-    return ".".join(parts[:-1]) + "." + patch
+    parts = parts[:-1]
+    parts.append(patch)
+
+    return ".".join(parts)
 
 
 def createBranch(name: str) -> None:
