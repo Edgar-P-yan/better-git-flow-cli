@@ -3,6 +3,8 @@
 Automatically manages hotfix branches, increments tag versions, pushes to remote and etc.
 The standard git-flow extension is not good enough 💩.
 
+**This repository's flow is managed by itself as proof of concept!**
+
 ## How to use
 
 Just copy the [./git-flow](https://github.com/Edgar-P-yan/better-git-flow-cli/blob/main/git-flow)

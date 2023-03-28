@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Git Flow Helper CLI 👾.
-Version: 0.2.0
+Version: 0.3.0
 Author: Edgar Pogosyan <edgar.pogosyan.a@gmail.com> (https://github.com/Edgar-P-yan)
 Repository: https://github.com/Edgar-P-yan/better-git-flow-cli
 Licence: this is licensed under MIT License, see file LICENSE (https://github.com/Edgar-P-yan/better-git-flow-cli/blob/main/LICENSE).
