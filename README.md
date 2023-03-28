@@ -46,11 +46,12 @@ merges fixes into `main` and `develop` branches, and automatically pushes change
 In future, I might also add autmatic creation of Pull Requests via GitHub's CLI tool. But for now,
 this simple script will do the job.
 
-## Windows
+## How to use it in Windows?
 
-I recommend you to use WSL/WSL2, since they are very developer-oriented, and work as usual UNIX systems.
-But if you want to stick with the standard Windows CMD then also take the [git-flow.bat](./git-flow.bat) file
-into your projects root directory, it'l run the python script as needed.
+This CLI helper works just fine in UNIX-like systems. I recommend Windows users to use WSL/WSL2, since they
+are very developer-oriented, and work as usual UNIX system. But if you want to stick with the standard
+Windows CMD then take the [git-flow.bat](./git-flow.bat) file into your projects root directory, it'l run
+the python script as needed.
 
 ## Licence
 
