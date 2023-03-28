@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Git Flow Helper CLI 👾.
-Version: 0.1.0
+Version: 0.2.0
 Author: Edgar Pogosyan <edgar.pogosyan.a@gmail.com> (https://github.com/Edgar-P-yan)
 Repository: https://github.com/Edgar-P-yan/better-git-flow-cli
 Licence: this is licensed under MIT License, see file LICENSE (https://github.com/Edgar-P-yan/better-git-flow-cli/blob/main/LICENSE).
@@ -10,23 +10,42 @@ The standard git-flow extension is not good enough 💩.
 
 Available commands:
 
-./git-flow fix start [name]
-    Creates new "hotfix/*" branch with next-patch-version name, or with the specified name.
+./git-flow fix start [TAG]
+    Creates new "hotfix/*" branch with next-patch-version name,
+    or with the specified name.
+
 ./git-flow fix finish
-    Merges current "hotfix/*" branch into "main" and "develop", sets tags, and pushes to remote.
+    Merges current "hotfix/*" branch into "main" and "develop",
+    sets tags, and pushes to remote. If anything worked successfully, then
+    deletes the hotfix branch.
+
+./git-flow feat start DESCRIPTION
+    Start feature branch. Works only on "develop" and "release/*" branches.
+
+./git-flow feat finish [-mr]
+    Finishes feature. Merges into develop branch. If the "-mr" flag is specified
+    then it also merges into the latest "release/*" branch, and increments "-rc.*" version on it.
+
 ./git-flow help
     Show this help message.
 """
 
 import sys
 import os
+from typing import Union
+
+RELEASE_BRANCH_PREFIX = "release/"
+FEATURE_BRANCH_PREFIX = "feature/"
+HOTFIX_BRANCH_PREFIX = "hotfix/"
+DEVELOP_BRANCH_NAME = "develop"
+MAIN_BRANCH_NAME = "main"
 
 
-def main():
+def main() -> None:
     currentBranchName = getCurrentBranchName()
 
     try:
-        if len(sys.argv) <= 1 or sys.argv[1] == "help":
+        if len(sys.argv) <= 1 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
             print(helpMessage)
         elif sys.argv[1] == "fix":
             if sys.argv[2] == "start":
@@ -36,37 +55,78 @@ def main():
                     sys.exit(1)
 
                 if len(sys.argv) >= 4:
-                    branchName = "hotfix/" + sys.argv[3]
+                    branchName = HOTFIX_BRANCH_PREFIX + sys.argv[3]
                     print("Using specified name. Creating branch " + branchName)
                     createBranch(branchName)
                 else:
                     latestTag = getLatestTag()
-                    branchName = "hotfix/" + semverAddPatch(latestTag)
+                    branchName = HOTFIX_BRANCH_PREFIX + \
+                        semverAddPatch(latestTag)
                     print("Latest tag was: " + latestTag +
                           ". Creating branch " + branchName)
                     createBranch(branchName)
 
             elif sys.argv[2] == "finish":
-                if not currentBranchName.startswith("hotfix/"):
+                if not currentBranchName.startswith(HOTFIX_BRANCH_PREFIX):
                     print("Should be on a hotfix branch. Now on " +
                           currentBranchName)
                     sys.exit(1)
 
-                tagName = currentBranchName[len("hotfix/"):]
+                tagName = currentBranchName[len(HOTFIX_BRANCH_PREFIX):]
 
-                exec("git checkout main")
+                exec("git checkout " + MAIN_BRANCH_NAME)
                 exec("git merge " + currentBranchName + " --no-ff")
                 exec("git tag " + tagName)
-                exec("git push && git push --tag")
-                exec("git checkout develop")
+                exec("git checkout " + DEVELOP_BRANCH_NAME)
                 exec("git merge " + currentBranchName + " --no-ff")
-                exec("git push")
-                exec("git checkout main")
+                exec("git checkout " + MAIN_BRANCH_NAME)
+                exec("git push --tags origin " + DEVELOP_BRANCH_NAME +
+                     " " + MAIN_BRANCH_NAME)
+                exec("git branch -D " + currentBranchName)
 
             else:
                 print(
                     "Unknown subcommand '" + sys.argv[1] + " " + sys.argv[2] + "'. See './git-flow help' for available commands.")
                 sys.exit(1)
+
+        elif sys.argv[1] == "feat":
+            if sys.argv[2] == "start":
+                if currentBranchName != DEVELOP_BRANCH_NAME and not currentBranchName.startswith(RELEASE_BRANCH_PREFIX):
+                    print("Should be on develop branch to start a feature. Now on " +
+                          currentBranchName)
+                    sys.exit(1)
+
+                if len(sys.argv) < 4:
+                    print(
+                        "You should specify a DESCRIPTION for you feature. See ./git-flow help")
+                    sys.exit(1)
+
+                branchName = FEATURE_BRANCH_PREFIX + sys.argv[3]
+                print("Creating branch " + branchName)
+                createBranch(branchName)
+
+            elif sys.argv[2] == "finish":
+                if not currentBranchName.startswith(FEATURE_BRANCH_PREFIX):
+                    print("Should be on a feature branch. Now on " +
+                          currentBranchName)
+                    sys.exit(1)
+
+                exec("git checkout " + DEVELOP_BRANCH_NAME)
+                exec("git merge " + currentBranchName + " --no-ff")
+                exec("git push")
+
+                if "-mr" in sys.argv:
+                    releaseBranchName = getLatestReleaseBranchName()
+
+                    if releaseBranchName is None:
+                        print("No release branch is found.")
+                    else:
+                        exec("git checkout " + releaseBranchName)
+                        exec("git merge " + currentBranchName + " --no-ff")
+                        latestTag = getLatestTag()
+                        nextRcTag = semverIncrReleaseCandidate(latestTag)
+                        exec("git tag " + tagName)
+                        exec("git push && git push --tag")
 
         else:
             print("Unknown subcommand '" +
@@ -77,11 +137,24 @@ def main():
         sys.exit(1)
 
 
-def getCurrentBranchName():
+def getLatestReleaseBranchName() -> Union[str, None]:
+    branches = sorted(map(
+        lambda l: l.strip(),
+        exec("git branch --list '" +
+             RELEASE_BRANCH_PREFIX + "*'").split("\n")
+    ))
+
+    if len(branches) == 0:
+        return None
+
+    return branches[:-1]
+
+
+def getCurrentBranchName() -> str:
     return exec("git rev-parse --abbrev-ref HEAD").strip()
 
 
-def getLatestTag():
+def getLatestTag() -> str:
     return exec("git describe --tags --abbrev=0").strip()
 
 
@@ -92,11 +165,21 @@ def semverAddPatch(ver: str) -> str:
     return ".".join(parts[:-1]) + "." + patch
 
 
-def createBranch(name: str):
+def semverIncrReleaseCandidate(ver: str) -> str:
+    """
+    Accepts only v1.0.0-rc.1 format.
+    """
+    parts = ver.split(".")
+    patch = str(int(parts[-1]) + 1)
+
+    return ".".join(parts[:-1]) + "." + patch
+
+
+def createBranch(name: str) -> None:
     exec("git checkout -b " + name)
 
 
-def exec(cmd: str) -> "tuple[str, int]":
+def exec(cmd: str) -> str:
     stream = os.popen(cmd)
     output = stream.read()
     code = stream.close()
@@ -115,10 +198,19 @@ The standard git-flow extension is not good enough 💩.
 
 Available commands:
 
-./git-flow fix start [name]
+./git-flow fix start [TAG]
     Creates new "hotfix/*" branch with next-patch-version name, or with the specified name.
+
 ./git-flow fix finish
-    Merges current "hotfix/*" branch into "main" and "develop", sets tags, and pushes to remote.
+    Merges current "hotfix/*" branch into "main" and "develop", sets tags, and pushes to remote. If anything worked successfully, then deletes the hotfix branch.
+
+./git-flow feat start DESCRIPTION
+    Start feature branch. Works only on "develop" and "release/*" branches.
+
+./git-flow feat finish [-mr]
+    Finishes feature. Merges into develop branch. If the "-mr" flag is specified
+    then it also merges into the latest "release/*" branch, and increments "-rc.*" version on it.
+
 ./git-flow help
     Show this help message.
 """
