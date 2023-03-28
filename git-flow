@@ -197,8 +197,15 @@ def exec(cmd: str) -> str:
     return output
 
 
-helpMessage = """Git Flow Helper CLI 👾.
-Version: 0.1.0
+helpMessage = """   _____ _ _   ______ _               
+  / ____(_) | |  ____| |              
+ | |  __ _| |_| |__  | | _____      __
+ | | |_ | | __|  __| | |/ _ \ \ /\ / /
+ | |__| | | |_| |    | | (_) \ V  V / 
+  \_____|_|\__|_|    |_|\___/ \_/\_/  
+
+Git Flow Helper CLI 👾.
+Version: v0.1.0
 Automatically manages hotfix branches, increments tag versions, pushes to remote and etc.
 The standard git-flow extension is not good enough 💩.
 
