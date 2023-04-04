@@ -10,6 +10,7 @@
 
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen?style=for-the-badge)](https://github.com/pylint-dev/pylint)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Edgar-P-yan/better-git-flow-cli?sort=semver&style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/Edgar-P-yan/better-git-flow-cli?style=for-the-badge)
 
 Automatically manages hotfix branches, increments tag versions, pushes to remote and etc.
 The standard git-flow extension is not good enough 💩.
@@ -22,7 +23,7 @@ Just copy the [./git-flow](https://github.com/Edgar-P-yan/better-git-flow-cli/bl
 file into the root folder of your repo, then make it executable:
 
 ```bash
-wget https://raw.githubusercontent.com/Edgar-P-yan/better-git-flow-cli/v0.3.0/git-flow -O git-flow && chmod +x ./git-flow
+wget https://raw.githubusercontent.com/Edgar-P-yan/better-git-flow-cli/v0.4.0/git-flow -O git-flow && chmod +x ./git-flow
 ```
 
 And then use it like:
