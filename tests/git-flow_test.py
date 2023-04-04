@@ -6,7 +6,7 @@ gitflow = import_path("git-flow")
 
 class TestGitFlow(unittest.TestCase):
 
-    def test_semverAddPatch(self):
+    def test_semver_add_patch(self):
         cases = [
             Case("1.0", "1.1"),
             Case("1.0.1", "1.0.2"),
@@ -15,10 +15,11 @@ class TestGitFlow(unittest.TestCase):
         ]
 
         for case in cases:
-            self.assertEqual(gitflow.semverAddPatch(case.input), case.want)
+            self.assertEqual(gitflow.semver_incr_patch(case.input), case.want)
 
     def test_exec(self):
-        self.assertEqual(gitflow.exec("echo hello").strip(), "hello")
+        self.assertEqual(gitflow.exec_cmd("echo hello").strip(), "hello")
+
 
 if __name__ == '__main__':
     unittest.main()
