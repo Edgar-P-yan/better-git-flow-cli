@@ -8,6 +8,9 @@
   <br>
 </div>
 
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen?style=for-the-badge)](https://github.com/pylint-dev/pylint)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Edgar-P-yan/better-git-flow-cli?sort=semver&style=for-the-badge)
+
 Automatically manages hotfix branches, increments tag versions, pushes to remote and etc.
 The standard git-flow extension is not good enough 💩.
 
@@ -62,6 +65,16 @@ This CLI helper works just fine in UNIX-like systems. I recommend Windows users 
 are very developer-oriented, and work as usual UNIX system. But if you want to stick with the standard
 Windows CMD then take the [git-flow.bat](./git-flow.bat) file into your projects root directory, it'l run
 the python script as needed.
+
+## Contribution
+
+### Testing
+
+Use `unittest` for testing:
+
+```bash
+python3 tests/git-flow_test.py
+```
 
 ## Licence
 
